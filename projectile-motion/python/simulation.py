@@ -1,35 +1,22 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-__author__ = 'l0x6c'
-
-import sys
-import math
-import time
-
-import pygame
+import sys, math
+import time, pygame
 import pygame.freetype
 
-'''
-Object(angle=37, velocity=20, gravity=10)
-
-V_x = velocity * cos(37) = 16
-V_y = velocity * sin(37) = 12
-
-flight_time = 2 * V_y / g           = 2.4
-max_height  = pow(V_y, 2) / (2 * g) = 7.2
-max_range   = V_x * flight_time     = 38.4
-'''
+def map_(num, a, b, c, d):
+    return int((d - c) * (num - a) / (b - a) + c)
 
 class Object(object):
-    def __init__(self, a, v, g, p=60):
+    def __init__(self, a, v, g, p=30):
         self.p = p
         self.g = g
         self.a = math.radians(a)
-        self.v = list(map(
-            lambda x: round(x * v), 
-            [math.cos(self.a), math.sin(self.a)]
-        ))
+        self.v = [
+            v * math.cos(self.a),
+            v * math.sin(self.a)
+        ]
 
         self.pos = (0, 0)
         self.passed_t = 0
@@ -41,7 +28,7 @@ class Object(object):
     def __str__(self):
         return 'Object(angle={}, velocity={}, gravity={})'.format(
             round(math.degrees(self.a)),
-            self.v,
+            list(map(round, self.v)),
             self.g
         )
 
@@ -70,11 +57,8 @@ class Simulation(object):
 
         self.object = Object(a, v, g)
 
-    def render_text(self, text, pos, color=(255, 255, 255)):
+    def render_text(self, text, pos, color=(0, 0, 0)):
         self.font.render_to(self.screen, pos, text, color)
-
-    def map_(self, num, a, b, c, d):
-        return int((d - c) * (num - a) / (b - a) + c)
 
     def main(self):
         while True:
@@ -82,18 +66,19 @@ class Simulation(object):
                 if event.type == pygame.QUIT:
                     pygame.quit(); sys.exit()
 
-            self.screen.fill([0] * 3)
+            self.screen.fill([255] * 3)
+            pygame.draw.line(self.screen, [0] * 3, (0, self.size[1]), self.size, 4)
 
             x, y = self.object.pos
-            x_ = self.map_(x, 0, self.object.range, 0, self.size[0])
-            y_ = self.map_(y, 0, self.object.max_y, self.size[1], 0)
+            x_ = map_(x, 0, self.object.range, 0, self.size[0])
+            y_ = map_(y, 0, self.object.max_y, self.size[1], 0)
             
             self.render_text(str(self.object), (6, 6))
-            self.render_text('range: {}'.format(self.object.range), (6, 20))
-            self.render_text('max_y: {}'.format(self.object.max_y), (6, 34))
+            self.render_text('range: {}'.format(round(self.object.range)), (6, 20))
+            self.render_text('max_y: {}'.format(round(self.object.max_y)), (6, 34))
             self.render_text('curr pos: [{}, {}]'.format(*map(round, (x, y))), (6, 48))
 
-            pygame.draw.circle(self.screen, [255] * 3, (x_, y_), 5, 1)
+            pygame.draw.circle(self.screen, [0] * 3, (x_, y_), 5, 1)
             pygame.display.update(); self.object.update()
             
             time.sleep(0.09)
@@ -101,10 +86,13 @@ class Simulation(object):
 if __name__ == '__main__':
     pygame.freetype.init()
 
+    if not sys.argv[1:]:
+        sys.argv[1:] = [37, 100, 10] # angle, velocity, gravitational_const
+
     simulation = Simulation(
-        (800, 600),
-        int(sys.argv[1]),
-        eval(sys.argv[2]), 
-        int(sys.argv[3])
+        (640, 480),
+        float(sys.argv[1]),
+        eval(str(sys.argv[2])),
+        float(sys.argv[3])
     )
     simulation.main(); input()
