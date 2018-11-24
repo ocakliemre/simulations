@@ -1,3 +1,8 @@
+/*
+    Projectile motion simulation by gh/l0x6c
+    ball.js
+*/
+
 function Ball (a, v, g, p) {
     this.p = p;
     this.g = g;

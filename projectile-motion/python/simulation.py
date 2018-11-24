@@ -64,7 +64,7 @@ class Object(object):
 class Simulation(object):
     def __init__(self, size, a, v, g=10):
         self.size = size
-        self.font = pygame.freetype.Font('/usr/share/fonts/TTF/Hack-Regular.ttf', 12)
+        self.font = pygame.freetype.SysFont('Lucida Sans', 12)
         self.screen = pygame.display.set_mode(size)
         self.screen.fill([0] * 3)
 
@@ -102,7 +102,7 @@ if __name__ == '__main__':
     pygame.freetype.init()
 
     simulation = Simulation(
-        (480, 320),
+        (800, 600),
         int(sys.argv[1]),
         eval(sys.argv[2]), 
         int(sys.argv[3])

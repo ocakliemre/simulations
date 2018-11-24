@@ -10,16 +10,15 @@ function sleep(millisecs) {
 }
 
 function setup() {
-    ball = new Ball(37, 25, 10, 60);
-    width = 600;
-    height = 480;
+    ball = new Ball(37, 25, 10, 30);
+    width = 480;
+    height = 320;
     createCanvas(width, height);
 }
 
 function draw () {
-    background(0);
-    stroke(255);
-    strokeWeight(3);
+    background(0); fill(0);
+    stroke(255); strokeWeight(3);
 
     var x = ball.pos[0];
     var y = ball.pos[1];
@@ -32,6 +31,8 @@ function draw () {
     text (`max_y: ${round(ball.max_y)}`, 10, 45)
     text (`curr pos: [${[round(x), round(y)]}]`, 10, 60)
 
-    strokeWeight(5); point (x_, y_); ball.update();
+    strokeWeight(1); noFill();
+    ellipse(x_, y_, 10, 10); ball.update();
+
     sleep(90);
 }
